@@ -13,7 +13,7 @@
   },
   "profiles": {
     "console": {
-      "commandName": "Project",
+      "commandName": "IIS",
       "launchBrowser": true,
       "launchUrl": "http://localhost:5001",
       "environmentVariables": {

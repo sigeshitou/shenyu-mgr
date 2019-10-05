@@ -20,7 +20,7 @@ namespace ShenYu.mgr.core.Controllers
 
         public ActionResult DashBord()
         {
-            return Content($"Ant后台快速开发框架 版本号：{ typeof(Startup).Assembly.GetName().Version.ToString()}");
+            return Content($"神域科技后台系统");
         }
     }
 }
