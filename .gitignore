@@ -3,3 +3,18 @@
 ################################################################################
 
 /.vs/ShenYu.mgr
+/Configuration/Configuration
+/DBModels/DBModels/obj
+/DBModels/DBModels/bin/Debug/netcoreapp2.2
+/Mapping/Mapping/obj
+/Mapping/Mapping/bin/Debug/netcoreapp2.2
+/Infrastructure/Infrastructure/obj
+/Infrastructure/Infrastructure/bin/Debug/netcoreapp2.2
+/mgr.core/obj
+/mgr.core/bin/Debug/netcoreapp2.2
+/ServicesModel/ServicesModel/obj
+/ServicesModel/ServicesModel/bin/Debug/netcoreapp2.2
+/ViewModels/ViewModels/obj
+/ViewModels/ViewModels/bin/Debug/netcoreapp2.2
+/Repository/Repository/obj
+/Repository/Repository/bin/Debug/netcoreapp2.2
