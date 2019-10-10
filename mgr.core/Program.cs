@@ -13,7 +13,8 @@ namespace ShenYu.mgr.core
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("host.json",optional:true)
                 .Build();
-            CreateWebHostBuilder(args).UseConfiguration(config).Build().Run();
+            CreateWebHostBuilder(args).Build().Run();
+            //CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

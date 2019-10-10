@@ -18,3 +18,15 @@
 /ViewModels/ViewModels/bin/Debug/netcoreapp2.2
 /Repository/Repository/obj
 /Repository/Repository/bin/Debug/netcoreapp2.2
+/Mapping/Mapping/bin/Release/netcoreapp2.2
+/Infrastructure/Infrastructure/bin/Release/netcoreapp2.2
+/DBModels/DBModels/bin/Release/netcoreapp2.2
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/shenyumgr/v16
+/.vs/ProjectSettings.json
+/.vs/config
+/mgr.core/bin/Release/netcoreapp2.2
+/Repository/Repository/bin/Release/netcoreapp2.2
+/ServicesModel/ServicesModel/bin/Release/netcoreapp2.2
+/ViewModels/ViewModels/bin/Release/netcoreapp2.2

@@ -11,14 +11,15 @@
                 <div class="col-sm-12">
                     <div>
                         <div>
-                            <div class="btn-group hidden-xs" id="RoleTableEventsToolbar" role="group">
+                            <div class="btn-group hidden-xs" id="MieShenTableEventsToolbar" role="group">
+                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="查询" style="display: none; margin-right: 10px" v-on:click="_FreshTable">查询</button>
+                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="查看详情" style="display: none;margin-right: 10px" v-on:click="_MieShenEdit">查看详情</button>
                                 <div class="input-group" style="display: inline-block">
-                                    <input type="text" placeholder="请输入账号名" class="form-control input-md" id="userName" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
+                                    <input type="text" placeholder="请输入账号名" class="form-control input-md" id="username" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
                                 </div>
-                                
                             </div>
-                            <table id="RoleTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
-                        </div>
+                                <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -51,150 +52,32 @@
 
                     }
                 },
-                _roleDelete: function () {
-                    var selectRow = $('#RoleTable').bootstrapTable('getSelections');
+               _MieShenEdit: function () {
+                    var selectRow = $('#MieshenTable').bootstrapTable('getSelections');
                     if (selectRow.length < 1) {
                         swal({
                             title: "",
-                            text: "请选择角色！",
+                            text: "请选择行！",
                             type: "error"
                         });
                         return;
                     }
-
-                    var tid = selectRow[0].Tid;
-                    swal({
-                        title: "您确定要删除吗?",
-                        text: "若该角色下有用户会操作失败！",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "是的，朕决心已定！",
-                        cancelButtonText: "让朕再考虑一下…",
-                        showLoaderOnConfirm: true,
-                        preConfirm: function (isConfirm) {
-                            if (isConfirm) {
-                                QQT.ajax('/Admin/Role/DeleteRole',
-                                    'Post',
-                                    { tid: tid })
-                                    .done(function (response) {
-                                        $('#RoleTable').bootstrapTable('refresh', { silent: true });
-                                        swal("成功啦！", "操作成功!", "success");
-                                    });
-                            }
-                        }
-                    }).then(function () {
-
-                    }).catch(function () {
-
-                    });
-                },
-                _roleAdd: function () {
-                    vm.roleAddName = '',
-                        vm.roleAddDesc = '',
-                        $('#myModal').modal({ backdrop: 'static', keyboard: false });
-                    $('#myModal').modal('show');
-                },
-                _roleAddClose: function () {
-                    resetTree(zTree);
-                    $('#myModal').modal('hide');
-                },
-                _roleAddSave: function () {
-                    if ($.trim(vm.roleAddName).length < 1) {
-                        swal({
+                     swal({
                             title: "",
-                            text: "角色名称不可为空!",
-                            type: "error"
-                        });
-                        return;
-                    }
-                    var ac = getNodeIdAction(zTree);
-                    QQT.ajax('/Admin/Role/AddRole',
-                        'POST',
-                        {
-                            RoleName: vm.roleAddName,
-                            RoleDesc: vm.roleAddDesc,
-                            Ids: ac.ids,
-                            Actions: ac.actions
-                        },
-                        true)
-                        .done(function (response) {
-                            $('#myModal').modal('hide');
-                            resetTree(zTree);
-                            $('#RoleTable').bootstrapTable('refresh', { silent: true });
-                        });
-
-                },
-                _roleEdit: function () {
-                    var selectRow = $('#RoleTable').bootstrapTable('getSelections');
-                    if (selectRow.length < 1) {
-                        swal({
-                            title: "",
-                            text: "请选择角色！",
-                            type: "error"
-                        });
-                        return;
-                    }
-                    var row = $.extend({}, selectRow[0]);
-                    vm.currentRow = row;
-
-                    QQT.ajax('/Admin/Home/GetMenuTree',
-                        'POST',
-                        {
-                            roleId: vm.currentRow.Tid
-                        })
-                        .done(function (response) {
-                            if (editTree)editTree.destroy();
-                            //加载Menu
-                            var setting = {
-                                check: {
-                                    enable: true,
-                                }
-                            };
-
-                            editTree = $.fn.zTree.init($("#menu_tree_edit"), setting, response.Data);
-                            $('#editModal').modal({ backdrop: 'static', keyboard: false });
-                            $('#editModal').modal('show');
+                            text: JSON.stringify(selectRow),
+                            type: "success"
                         });
 
 
                 },
-                _roleEditClose: function () {
-                    $('#editModal').modal('hide');
-                },
-                _roleEditSave: function () {
-                    if ($.trim(vm.currentRow.RoleName).length < 1) {
-                        swal({
-                            title: "",
-                            text: "角色名称不可为空!",
-                            type: "error"
-                        });
-                        return;
-                    }
-                    var ac = getNodeIdAction(editTree);
-                    QQT.ajax('/Admin/Role/AddRole',
-                        'POST',
-                        {
-                            RoleName: vm.currentRow.RoleName,
-                            RoleDesc: vm.currentRow.Description,
-                            Ids: ac.ids,
-                            Actions: ac.actions,
-                            Tid: vm.currentRow.Tid
-                        },
-                        true)
-                        .done(function (response) {
-                            $('#editModal').modal('hide');
-                            resetTree(zTree);
-                            $('#RoleTable').bootstrapTable('refresh', { silent: true });
-                            swal("成功啦！", "更新成功!", "success");
-                        });
-
-                }
+               
+                
+               
             }
         });
 
         $(function () {
-            $('#RoleTable')
+            $('#MieshenTable')
                 .bootstrapTable({
                     ajax: ajaxRequest,
                     pageNumber: 1,
@@ -216,7 +99,7 @@
                     // showPaginationSwitch:true,
                     dataType: "json",
                     iconSize: 'outline',
-                    toolbar: '#RoleTableEventsToolbar',
+                    toolbar: '#MieshenTableEventsToolbar',
                     icons: {
                         refresh: 'glyphicon-repeat',
                         toggle: 'glyphicon-list-alt',
@@ -229,20 +112,45 @@
                             checkbox: true
                         },
                         {
-                            field: 'Tid',
-                            title: '角色Id'
+                            field: 'gamename',
+                            title: '游戏名'
                         },
                         {
-                            field: 'RoleName',
-                            title: '角色名称'
+                            field: 'platfrom',
+                            title: '平台'
                         },
                         {
-                            field: 'Description',
-                            title: '角色描述'
+                            field: 'region',
+                            title: '区服'
                         },
                         {
-                            field: 'CreateUser',
-                            title: '创建者'
+                            field: 'username',
+                            title: '账号'
+                        },
+                        {
+                            field: 'status',
+                            title: '状态'
+                        },
+                        {
+                            field: 'rolename',
+                            title: '角色名'
+                        }
+                        ,
+                        {
+                            field: 'profession',
+                            title: '职业'
+                        } ,
+                        {
+                            field: 'map',
+                            title: '地图'
+                        } ,
+                        {
+                            field: 'mapxy',
+                            title: '坐标'
+                        } ,
+                        {
+                            field: 'cookieinfo',
+                            title: 'cookie值'
                         }
                     ],
                     onLoadSuccess: function () {
@@ -256,21 +164,10 @@
                 });
 
             $(window).resize(function () {
-                $('#RoleTable').bootstrapTable('resetView', { height: $(window).height() });
+                $('#MieshenTable').bootstrapTable('resetView', { height: $(window).height() });
             });
 
-            //加载所有的menu
-            QQT.ajax('/Admin/Home/GetMenuTree', 'Post')
-                .done(function (response) {
-                    console.log(response);
-                    vm.menuTree = response.Data;
-                    var setting = {
-                        check: {
-                            enable: true,
-                        }
-                    };
-                    zTree = $.fn.zTree.init($("#menu_tree"), setting, response.Data);
-                });
+            
         });
 
 
@@ -279,15 +176,15 @@
             var pageIndex = params.data.offset / params.data.limit + 1;
             var orderBy = params.data.sort;
             var orderSequence = params.data.order;
-            QQT.ajax('/Admin/Role/GetRoleList',
+            QQT.ajax('/Admin/MieShen/GetMieShenList',
                 'POST',
                 {
                     pageIndex: pageIndex,
                     pageSize: pageSize,
                     orderBy: orderBy,
                     orderSequence: orderSequence,
-                    roleName: $.trim($('#roleName').val()),
-                    createUser: $.trim($('#createUser').val())
+                    userName: $.trim($('#username').val()),
+                    
                 })
                 .done(function (response) {
                     params.success({
@@ -297,37 +194,8 @@
                 });
 
         }
-
-        function getNodeIdAction(tree) {
-            var nodes = tree.getCheckedNodes();
-            var tmpNode;
-            var result = {};
-            var ids = [];
-            var actions = [];
-            for (var i = 0; i < nodes.length; i++) {
-                tmpNode = nodes[i];
-                if (tmpNode.Tid != 0) {
-                    ids.push(tmpNode.Tid);
-                } else {
-                    actions.push({
-                        MenuId: tmpNode.ParentTid,
-                        ActionId: tmpNode.ActionId,
-                        ActionName: tmpNode.name
-                    });
-                }
-            }
-            result.ids = ids;
-            result.actions = actions;
-            return result;
-        }
-
-        function resetTree(tree) {
-            if (!tree) {
-                return;
-            }
-            tree.checkAllNodes(false);
-            tree.expandAll(false);
-        }
+        
+ 
 
     </script>
 

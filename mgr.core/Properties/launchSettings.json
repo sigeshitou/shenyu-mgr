@@ -19,7 +19,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "nativeDebugging": false,
       "applicationUrl": "http://localhost:5001"
+    },
+    "ShenYu.mgr.core": {
+      "commandName": "Executable"
     }
   }
 }

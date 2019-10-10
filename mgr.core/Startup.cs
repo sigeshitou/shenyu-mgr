@@ -13,6 +13,11 @@ using NLog.Extensions.Logging;
 using Repository;
 using System;
 using ShenYu.mgr.core.Filter;
+using Repository.DapperRepository;
+using Configuration;
+using System.Linq;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace ShenYu.mgr.core
 {
@@ -38,11 +43,36 @@ namespace ShenYu.mgr.core
 
             services.AddScoped<IViewRenderService, ViewRenderService>();
             services.AddMvc(o => { o.Filters.Add<GlobalExceptionFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver())
                 .AddControllersAsServices();
 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(o =>
+    {
+        o.ExpireTimeSpan = TimeSpan.FromMinutes(480);//cookie默认有效时间为8个小时
+                    o.LoginPath = new PathString("/Admin/Account/Login");
+        o.LogoutPath = new PathString("/Admin/Account/Logout");
+        o.Cookie = new CookieBuilder
+        {
+            HttpOnly = true,
+            Name = ".ShenYu.mgr.core",
+            Path = "/"
+        };
+                });
+            services.AddDapper("SqlDb", m =>
+            {
+                try
+                {
+                    m.ConnectionString = Configuration.GetConnectionString("Connection_SqlServer");
+                    m.DbType = DbStoreType.SqlServer;
+                }
+                catch (Exception ex)
+                {
 
+                }
+
+            });
 
             services.AddHttpContextAccessor();
 
