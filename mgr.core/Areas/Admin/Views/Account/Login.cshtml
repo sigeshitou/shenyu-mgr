@@ -47,14 +47,14 @@
         });
 
         function loginAction() {
-            if (navigator.userAgent.indexOf("Chrome") < 0 ) {
-                swal({
-                    title: "",
-                    text: "不建议使用该浏览器。强烈建议更换谷歌浏览器以获得最佳体验！",
-                    type: "error"
-                });
-                return;
-            }
+            //if (navigator.userAgent.indexOf("Chrome") < 0 ) {
+            //    swal({
+            //        title: "",
+            //        text: "不建议使用该浏览器。强烈建议更换谷歌浏览器以获得最佳体验！",
+            //        type: "error"
+            //    });
+            //    return;
+            //}
             var userName = $.trim($('#userName').val());
             var password = $.trim($('#password').val());
             if (!userName) {
