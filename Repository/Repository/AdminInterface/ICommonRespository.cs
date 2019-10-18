@@ -14,7 +14,10 @@ using ViewModels.Reuqest;
 
 namespace Repository.Interface
 {
+    using Repository.DapperRepository;
     using System.Collections.Generic;
+    using ViewModels.Condition;
+    using ViewModels.Result;
 
 
     /// <summary>
@@ -22,6 +25,7 @@ namespace Repository.Interface
     /// </summary>
     public interface ICommonRespository : IRepository
     {
+        
         /// <summary>
         /// 获取所有的Table和Columns
         /// </summary>
@@ -47,5 +51,12 @@ namespace Repository.Interface
         /// <param name="model"></param>
         /// <returns></returns>
         byte[] CodeGen(CodeGenVm model);
+
+        /// <summary>
+        /// 查询数据返回
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        Task<SearchResult<List<dynamic>>> GetQueryResult(DapperClient dapperClient, ConditionBase conditionBase);
     }
 }

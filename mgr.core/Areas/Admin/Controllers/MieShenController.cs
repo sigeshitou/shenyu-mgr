@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Repository.DapperRepository;
+using Repository.Interface;
 using ViewModels.Admin;
 using ViewModels.Result;
 
@@ -15,13 +16,15 @@ namespace ShenYu.mgr.core.Areas.Admin.Controllers
     [Area("Admin")]
     public class MieShenController : BaseController
     {
+        private readonly ICommonRespository CommonRespository;
         private readonly DapperClient _SqlDB;
-        public MieShenController(IDapperFactory dapperFactory)
+        public MieShenController(ICommonRespository _commonRespository, IDapperFactory dapperFactory)
         {
-           
+
+            CommonRespository = _commonRespository;
             _SqlDB = dapperFactory.CreateClient("SqlDb");
         }
- 
+
         public IActionResult Index()
         {
             return View();
@@ -38,23 +41,17 @@ namespace ShenYu.mgr.core.Areas.Admin.Controllers
         [API("分页获取所有的角色")]
         public async Task<JsonResult> GetMieShenList(MieShenVm model)
         {
-            var result = new SearchResult<List<dynamic>>();
-            
-            var respositoryResult = _SqlDB.Query<dynamic>(@"exec p_mieshen_query @username", new { username = model.UserName });
-            result.Status = ResultConfig.Ok;
-            result.Info = ResultConfig.SuccessfulMessage;
-            result.Rows = respositoryResult;
-            result.Total = respositoryResult.Count;
-           
+            string strwhere = "1=1";
+            if (model.UserName != null && model.UserName != "")
+            {
+                strwhere += $" and a.username='" + model.UserName + "'";
+            }
+            model.Sql = $"select * from region_real where  " + strwhere;
+            model.Sql = @"select a.*,ISNULL(b.status,a.status) sta from mieshen_info  a left join mieshen_online b
+on a.platfrom = b.platfrom and a.region = b.region and a.gamename = b.gamename and a.username = b.username where "+ strwhere;
+            var result = await CommonRespository.GetQueryResult(_SqlDB,model);
+
             return Json(result);
- 
-            //var result = new SearchResult<List<SystemRole>>();
-            //var respositoryResult = await RoleRespository.GetList(model, UserToken);
-            //result.Status = ResultConfig.Ok;
-            //result.Info = ResultConfig.SuccessfulMessage;
-            //result.Rows = respositoryResult.Item2;
-            //result.Total = respositoryResult.Item1;
-            //return Json(result);
         }
     }
 }

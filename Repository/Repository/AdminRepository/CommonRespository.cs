@@ -1,11 +1,14 @@
-﻿using AntData.ORM.Data;
+﻿using AntData.ORM;
+using AntData.ORM.Data;
 using AntData.ORM.Mapping;
 using Autofac.Annotation;
 using Castle.DynamicProxy;
+using Configuration;
 using DbModel;
 using Infrastructure.CodeGen;
 using Infrastructure.Logging;
 using Newtonsoft.Json;
+using Repository.DapperRepository;
 using Repository.Interface;
 using ServicesModel;
 using System;
@@ -14,6 +17,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using ViewModels.Condition;
+using ViewModels.Result;
 using ViewModels.Reuqest;
 
 namespace Repository
@@ -178,7 +184,7 @@ namespace Repository
             {
                 throw new ArgumentException("targetClass");
             }
-            
+
             var properties = targetClass.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static).Where(e => e.CanWrite).ToArray();
 
             var result = (from item in properties
@@ -192,6 +198,42 @@ namespace Repository
             return result.OrderBy(r => r.Name).ToList();
         }
 
+        public async Task<SearchResult<List<dynamic>>> GetQueryResult(DapperClient dapperClient, ConditionBase conditionBase)
+        {
+            var result = new SearchResult<List<dynamic>>();
+            try
+            {
+                var sqlCount = @"WITH CTE AS  ( [[CTE_SQL]] )
+            SELECT COUNT(*) FROM CTE";
+                var sql = @"WITH CTE AS ( [[CTE_SQL]] )
+            SELECT  *
+            FROM (
+                    SELECT ROW_NUMBER() OVER ([[ORDERBY]]) AS RowNumber,* FROM CTE
+                )   as A
+            WHERE RowNumber > [[PAGESIZE]]*([[PAGEINDEX]]-1) and RowNumber <= [[PAGESIZE]]*([[PAGEINDEX]]) [[ORDERBY]]";
+                sqlCount = sqlCount.Replace("[[CTE_SQL]]", conditionBase.Sql);
 
+                sql = sql.Replace("[[CTE_SQL]]", conditionBase.Sql);
+                sql = sql.Replace("[[ORDERBY]]", "order by "+conditionBase.OrderBy + " " + conditionBase.OrderSequence);
+                sql = sql.Replace("[[PAGEINDEX]]", conditionBase.PageIndex.ToString());
+                sql = sql.Replace("[[PAGESIZE]]", conditionBase.PageSize.ToString());
+                var respositoryResult =await dapperClient.Query<dynamic>(sql).ToListAsync();
+               
+                var respositorycount = dapperClient.ExecuteScalar<int>(sqlCount);
+                result.Status = ResultConfig.Ok;
+                result.Info = ResultConfig.SuccessfulMessage;
+                result.Rows = respositoryResult;
+                result.Total = respositorycount;
+            }
+            catch (Exception ex)
+            {
+                result.Status = ResultConfig.Fail;
+                result.Info =ex.Message;
+                
+            }
+            return result;
+
+        }
     }
+    
 }

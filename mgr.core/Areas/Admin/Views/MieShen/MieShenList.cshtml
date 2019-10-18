@@ -5,7 +5,6 @@
 <link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
-
         <div class="ibox-content">
             <div class="row row-lg">
                 <div class="col-sm-12">
@@ -19,7 +18,7 @@
                                 </div>
                             </div>
                                 <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
-                            </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -63,13 +62,7 @@
                         return;
                    }
                    alert(JSON.stringify(selectRow));
-                      
-
-
                 },
-               
-                
-               
             }
         });
 
@@ -79,7 +72,7 @@
                     ajax: ajaxRequest,
                     pageNumber: 1,
                     pageSize: 10,
-                    pageList: [10, 25, 50, 100],
+                    pageList: [10, 20, 25, 50, 100],
                     resetOffset: true,
                     search: false,
                     sortable: true,
@@ -89,6 +82,7 @@
                     showToggle: true,
                     showColumns: false,
                     striped: true,
+                    sortName:'username',
                     sortOrder: 'desc',
                     clickToSelect: true,
                     singleSelect: true,
@@ -125,7 +119,7 @@
                             title: '账号'
                         },
                         {
-                            field: 'status',
+                            field: 'sta',
                             title: '状态'
                         },
                         {
@@ -146,9 +140,13 @@
                             title: '坐标'
                         } ,
                         {
-                            field: 'cookieinfo',
-                            title: 'cookie值'
-                        }
+                            field: 'BindMoney',
+                            title: '绑定元宝'
+                        } ,
+                        {
+                            field: 'Money',
+                            title: '元宝'
+                        } 
                     ],
                     onLoadSuccess: function () {
 

@@ -1,0 +1,344 @@
+﻿@{
+    ViewBag.Title = "灭神区服管理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="row row-lg">
+                <div class="col-sm-12">
+                    <div>
+                        <div>
+                            <div class="btn-group hidden-xs" id="RegionTableEventsToolbar" role="group">
+                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="查询" style="display: none; margin-right: 10px" v-on:click="_FreshTable">查询</button>
+                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="新增区服" style="display: none; margin-right: 10px" v-on:click="_regionAdd">新增区服</button>
+                                @*<button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="修改区服" style="display: none;margin-right: 10px" v-on:click="_RegionEdit">修改区服</button>*@
+                                <button type="button" class="btn btn-w-m btn-danger authorization" action-id="role-delete" action-name="删除区服" style="display: none;margin-right: 10px" v-on:click="_regionDelete">删除区服</button>
+                                <div class="input-group" style="display: inline-block">
+                                    <input type="text" placeholder="请输入区服" class="form-control input-md" id="region" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
+                                </div>
+                            </div>
+                            <table id="RegionTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">平台：</label>
+                    <input class="js-example-data-array-selected text-box" id="regionpaltform" style="width: 450px;" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">区服：</label>
+                    <input id="region" name="region" v-model="region" class="form-control" type="text" placeholder="请输入区服" data-pure-clear-button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label">开区时间：</label>
+                    <input id="opentime" name="opentime" v-model="opentime" class="form-control" type="text" placeholder="请输入开区时间" data-pure-clear-button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" id="close-model" v-on:click="_regionAddClose">关闭</button>
+                <button type="button" class="btn btn-primary" id="save-model" v-on:click="_regionAddSave">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/plugins/zTree/3.5/jquery.ztree.all.js?201811201906"></script>
+
+    <script type="text/javascript">
+        var zTree;
+        var editTree;
+        var vm = new Vue({
+            el: 'body',
+            data: {
+                menuTree: [],
+                region: '',
+                realregion: '',
+                opentime:getDates(),
+                currentRow: {}
+            },
+            computed: {},
+            ready: function () {
+                auth();
+            },
+            methods: {
+                _FreshTable: function () {
+                    try {
+                        $(".bootstrap-table button[name='refresh']")[0].click();
+                    } catch (e) {
+
+                    }
+                },
+                 _regionAdd: function () {
+                     vm.realregion = '',
+                         vm.region = '',
+                         vm.opentime = getDates();
+                        $('#myModal').modal({ backdrop: 'static', keyboard: false });
+                    $('#myModal').modal('show');
+                },
+                _regionAddClose: function () {
+                    
+                    $('#myModal').modal('hide');
+                },
+                _regionAddSave: function () {
+                    if ($.trim(vm.region).length < 1) {
+                        swal({
+                            title: "",
+                            text: "区服不能为空!",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    if ($.trim(vm.opentime).length < 1) {
+                        swal({
+                            title: "",
+                            text: "开区时间不能为空!",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    if (!checkDate(vm.opentime)) {
+                         swal({
+                            title: "",
+                            text: "开区时间格式不正确！",
+                            type: "error"
+                         });
+                        return;
+                    }
+                    var platformid = $('#regionpaltform').select2('data') && $('#regionpaltform').select2('data').id;
+                    if (!platformid) {
+                        swal({
+                            title: "",
+                            text: "请选择平台！",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    
+                    QQT.ajax('/Admin/Region/AddRegion',
+                        'POST',
+                        {
+                            platform: platformid,
+                            region: vm.region,
+                            opentime: vm.opentime
+                        })
+                         .done(function (response) {
+                             $('#myModal').modal('hide');
+                            $('#RegionTable').bootstrapTable('refresh', { silent: true });
+                        swal("成功啦！", "新增区服成功!", "success");
+                    }).catch(function () {
+                    });;
+
+                },
+                _RegionEdit: function () {
+                    var selectRow = $('#RegionTable').bootstrapTable('getSelections');
+                    if (selectRow.length < 1) {
+                        swal({
+                            title: "",
+                            text: "请选择行！",
+                            type: "error"
+                        });
+                        return;
+                    }
+
+
+
+                },
+                _regionDelete: function () {
+                    var selectRow = $('#RegionTable').bootstrapTable('getSelections');
+                    if (selectRow.length < 1) {
+                        swal({
+                            title: "",
+                            text: "请选择行！",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    var platform = selectRow[0].platform;
+                       var region = selectRow[0].region;
+                    swal({
+                        title: "您确定要删除吗?",
+                        text: "请谨慎操作",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        showLoaderOnConfirm: true,
+                        preConfirm: function (isConfirm) {
+                            if (isConfirm) {
+                                QQT.ajax('/Admin/Region/DeleteRegion',
+                                    'Post',
+                                    {  Platform: platform,
+                                        Region: region,
+                                    })
+                                    .done(function (response) {
+                                        $('#RegionTable').bootstrapTable('refresh', { silent: true });
+                                        swal("成功啦！", "操作成功!", "success");
+                                    });
+                            }
+                        }
+                    }).then(function () {
+
+                    }).catch(function () {
+
+                    });
+
+
+                },
+
+
+            }
+        });
+        function getDates(){
+			//设置当前时间
+	      	var date = new Date();
+		    var year = date.getFullYear();//月份从0~11，所以加一
+		    var dateArr = [date.getMonth() + 1,date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds()];
+		    for(var i=0;i<dateArr.length;i++){
+		    	if (dateArr[i] >= 1 && dateArr[i] <= 9) { 
+			        dateArr[i] = "0" + dateArr[i];
+			    }
+		    }
+            var strDate = year + '-' + dateArr[0] + '-' + dateArr[1] + ' ' + dateArr[2] + ':' + dateArr[3];
+            return strDate;
+		}
+        function checkDate(dateStr){
+            var a = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/
+            if (!a.test(dateStr)) {
+                return false
+            }else{
+                return true;
+            }
+        }
+ 
+        $(function () {
+            $('#RegionTable')
+                .bootstrapTable({
+                    ajax: ajaxRequest,
+                    pageNumber: 1,
+                    pageSize: 10,
+                    pageList: [10, 25, 50, 100],
+                    resetOffset: true,
+                    search: false,
+                    sortable: true,
+                    pagination: true,
+                    sortName: 'region',
+                    height: $(window).height(),
+                    showRefresh: true,
+                    showToggle: true,
+                    showColumns: false,
+                    striped: true,
+                    sortOrder: 'desc',
+                    clickToSelect: true,
+                    singleSelect: true,
+                    cache: false,
+                    // showPaginationSwitch:true,
+                    dataType: "json",
+                    iconSize: 'outline',
+                    toolbar: '#RegionTableEventsToolbar',
+                    icons: {
+                        refresh: 'glyphicon-repeat',
+                        toggle: 'glyphicon-list-alt',
+                        columns: 'glyphicon-list'
+                    },
+                    columns: [
+                        {
+                            field: 'state',
+                            title: '',
+                            checkbox: true
+                        },
+                        {
+                            field: 'gamename',
+                            title: '游戏名'
+                        },
+                        {
+                            field: 'platform',
+                            title: '平台'
+                        },
+                        {
+                            field: 'region',
+                            title: '区服'
+                        },
+
+                        {
+                            field: 'realregion',
+                            title: '真实区服'
+                        },
+
+                        {
+                            field: 'opentime',
+                            title: '开区时间'
+                        }
+                    ],
+                    onLoadSuccess: function () {
+
+                    },
+                    onToggle: function () {
+                    },
+                    onEditableSave: function (field, row, oldValue, $el) {
+
+                    }
+                });
+
+            $(window).resize(function () {
+                $('#RegionTable').bootstrapTable('resetView', { height: $(window).height() });
+            });
+            var searchList = new Array();
+              searchList.push({
+                        id:"37wan",
+                        text: "37平台"
+              });
+             $("#regionpaltform").select2({
+                data: searchList,
+                placeholder: '请选择',
+                multiple: false,
+               
+            });
+
+        });
+
+
+        function ajaxRequest(params) {
+            var pageSize = params.data.limit;
+            var pageIndex = params.data.offset / params.data.limit + 1;
+            var orderBy = params.data.sort;
+            var orderSequence = params.data.order;
+            QQT.ajax('/Admin/Region/GetRegionList',
+                'POST',
+                {
+                    pageIndex: pageIndex,
+                    pageSize: pageSize,
+                    orderBy: orderBy,
+                    orderSequence: orderSequence,
+                    region: $.trim($('#region').val()),
+
+                })
+                .done(function (response) {
+                    params.success({
+                        total: response.Total,
+                        rows: response.Rows
+                    });
+                });
+
+        }
+
+
+
+    </script>
+
+}

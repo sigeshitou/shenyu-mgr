@@ -18,15 +18,17 @@ using Infrastructure.Web;
 using Mapping;
 using Repository.Interface;
 using Newtonsoft.Json;
+using Repository.DapperRepository;
 
 namespace Repository
 {
     /// <summary>
     /// 基础仓库
     /// </summary>
-    public class BaseRepository: IRepository
+    public class BaseRepository : IRepository
     {
 
+        
         /// <summary>
         /// DB
         /// </summary>
@@ -54,6 +56,8 @@ namespace Repository
         {
             return this.DB.Execute(sql, parameters);
         }
+
+        
     }
 
     /// <summary>

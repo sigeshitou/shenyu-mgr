@@ -85,7 +85,7 @@ namespace DbModel
                         time = detail.Duration.TotalMilliseconds + "豪秒";
                     }
                     sql += $"Server：{detail.Server},DB名称：{detail.DbName}, 执行时间：{time}" + Environment.NewLine + "#####################################################" + Environment.NewLine;
-                    LogHelper.Info("SQL", sql);
+                    LogHelper.Info("SQL:", sql);
                 }
             }
             catch (Exception)

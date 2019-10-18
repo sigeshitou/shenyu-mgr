@@ -132,7 +132,34 @@ namespace Repository.DapperRepository
                 }
             }
         }
-
+        public virtual int Execute(string strSql)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                try
+                {
+                    return conn.Execute(strSql) > 0 ? 0 : -1;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+        public virtual T ExecuteScalar<T>(string strSql)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                try
+                {
+                    return conn.ExecuteScalar<T>(strSql);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         /// <summary>
         /// 执行存储过程
         /// </summary>

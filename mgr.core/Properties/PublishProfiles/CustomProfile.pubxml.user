@@ -8,4 +8,9 @@
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>C:\Users\sigeshitou\Desktop\ShenYu</_PublishTargetUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <File Include="Areas/Admin/Controllers/RegionController.cs">
+      <publishTime>10/16/2019 22:12:48</publishTime>
+    </File>
+  </ItemGroup>
 </Project>

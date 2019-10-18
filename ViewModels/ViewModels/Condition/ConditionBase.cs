@@ -70,5 +70,15 @@ namespace ViewModels.Condition
             get { return string.IsNullOrEmpty(orderSequence)?"asc": orderSequence; }
             set { orderSequence = value; }
         }
+        /// <summary>
+        /// 相应查询的sql
+        /// </summary>
+        public string Sql
+        {
+            get { return sql; }
+            set { sql = value; }
+        }
+
+        private string sql;
     }
 }

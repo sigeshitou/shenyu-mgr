@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using NLog;
 namespace Repository.DapperRepository
 {
     public static class DapperFactoryCollectionExtensions
@@ -13,7 +13,7 @@ namespace Repository.DapperRepository
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-           
+            //services.AddNLog();
             services.AddOptions();
 
             services.AddSingleton<DefaultDapperFactory>();
