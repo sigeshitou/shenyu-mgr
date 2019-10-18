@@ -2,7 +2,7 @@
     ViewBag.Title = "灭神管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
         <div class="ibox-content">
@@ -17,8 +17,8 @@
                                     <input type="text" placeholder="请输入账号名" class="form-control input-md" id="username" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
                                 </div>
                             </div>
-                                <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
-                         </div>
+                            <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
     </div>
 </div>
 @section Scripts{
-  
+    <script src="~/js/plugins/zTree/3.5/jquery.ztree.all.js?201811201906"></script>
 
     <script type="text/javascript">
         var zTree;
@@ -51,7 +51,7 @@
 
                     }
                 },
-               _MieShenEdit: function () {
+                _MieShenEdit: function () {
                     var selectRow = $('#MieshenTable').bootstrapTable('getSelections');
                     if (selectRow.length < 1) {
                         swal({
@@ -60,8 +60,8 @@
                             type: "error"
                         });
                         return;
-                   }
-                   alert(JSON.stringify(selectRow));
+                    }
+                    alert(JSON.stringify(selectRow));
                 },
             }
         });
@@ -82,7 +82,7 @@
                     showToggle: true,
                     showColumns: false,
                     striped: true,
-                    sortName:'username',
+                    sortName: 'username',
                     sortOrder: 'desc',
                     clickToSelect: true,
                     singleSelect: true,
@@ -130,23 +130,23 @@
                         {
                             field: 'profession',
                             title: '职业'
-                        } ,
+                        },
                         {
                             field: 'map',
                             title: '地图'
-                        } ,
+                        },
                         {
                             field: 'mapxy',
                             title: '坐标'
-                        } ,
+                        },
                         {
                             field: 'BindMoney',
                             title: '绑定元宝'
-                        } ,
+                        },
                         {
                             field: 'Money',
                             title: '元宝'
-                        } 
+                        }
                     ],
                     onLoadSuccess: function () {
 
@@ -162,7 +162,7 @@
                 $('#MieshenTable').bootstrapTable('resetView', { height: $(window).height() });
             });
 
-            
+
         });
 
 
@@ -179,7 +179,7 @@
                     orderBy: orderBy,
                     orderSequence: orderSequence,
                     userName: $.trim($('#username').val()),
-                    
+
                 })
                 .done(function (response) {
                     params.success({
@@ -189,8 +189,8 @@
                 });
 
         }
-        
- 
+
+
 
     </script>
 
