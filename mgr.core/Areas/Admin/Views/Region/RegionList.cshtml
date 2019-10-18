@@ -2,7 +2,8 @@
     ViewBag.Title = "灭神区服管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
+
+<script src="~/js/My97DatePicker/WdatePicker.js"></script>
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
         <div class="ibox-content">
@@ -13,7 +14,7 @@
                             <div class="btn-group hidden-xs" id="RegionTableEventsToolbar" role="group">
                                 <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="查询" style="display: none; margin-right: 10px" v-on:click="_FreshTable">查询</button>
                                 <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="新增区服" style="display: none; margin-right: 10px" v-on:click="_regionAdd">新增区服</button>
-                                @*<button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="修改区服" style="display: none;margin-right: 10px" v-on:click="_RegionEdit">修改区服</button>*@
+                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="修改区服" style="display: none;margin-right: 10px" v-on:click="_regionEdit">修改区服</button>
                                 <button type="button" class="btn btn-w-m btn-danger authorization" action-id="role-delete" action-name="删除区服" style="display: none;margin-right: 10px" v-on:click="_regionDelete">删除区服</button>
                                 <div class="input-group" style="display: inline-block">
                                     <input type="text" placeholder="请输入区服" class="form-control input-md" id="region" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
@@ -42,10 +43,10 @@
                     <label class="control-label">区服：</label>
                     <input id="region" name="region" v-model="region" class="form-control" type="text" placeholder="请输入区服" data-pure-clear-button>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="control-label">开区时间：</label>
-                    <input id="opentime" name="opentime" v-model="opentime" class="form-control" type="text" placeholder="请输入开区时间" data-pure-clear-button>
+                    <input id="opentime" name="opentime" v-model="opentime" class="form-control" type="text" placeholder="请输入开区时间" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" data-pure-clear-button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -55,7 +56,37 @@
         </div>
     </div>
 </div>
+<div class="modal inmodal" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">平台：</label>
+                    <input class="js-example-data-array-selected text-box" id="platformedit" v-model="currentRow.platform" style="width: 450px;" />
+                </div>
 
+                <div class="form-group">
+                    <label class="control-label">区服：</label>
+                    <input v-model="currentRow.region" class="form-control" type="text" placeholder="请输入区服" data-pure-clear-button>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">真实区服：</label>
+                    <input v-model="currentRow.realregion" class="form-control" type="text" placeholder="请输入真实区服" data-pure-clear-button>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">开区时间：</label>
+                    <input v-model="currentRow.opentime" class="form-control" type="text" placeholder="请输入开区时间" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})" data-pure-clear-button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" id="close-model" v-on:click="_regionEditClose">关闭</button>
+                <button type="button" class="btn btn-primary" id="save-model" v-on:click="_regioneditSave">更新</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts{
     <script src="~/js/plugins/zTree/3.5/jquery.ztree.all.js?201811201906"></script>
 
@@ -68,7 +99,7 @@
                 menuTree: [],
                 region: '',
                 realregion: '',
-                opentime:getDates(),
+                opentime: getDates(),
                 currentRow: {}
             },
             computed: {},
@@ -83,15 +114,17 @@
 
                     }
                 },
-                 _regionAdd: function () {
-                     vm.realregion = '',
-                         vm.region = '',
-                         vm.opentime = getDates();
-                        $('#myModal').modal({ backdrop: 'static', keyboard: false });
+                _regionAdd: function () {
+                    vm.realregion = '',
+                        vm.region = '',
+                        vm.opentime = getDates();
+
+
+                    $('#myModal').modal({ backdrop: 'static', keyboard: false });
                     $('#myModal').modal('show');
                 },
                 _regionAddClose: function () {
-                    
+
                     $('#myModal').modal('hide');
                 },
                 _regionAddSave: function () {
@@ -112,11 +145,11 @@
                         return;
                     }
                     if (!checkDate(vm.opentime)) {
-                         swal({
+                        swal({
                             title: "",
                             text: "开区时间格式不正确！",
                             type: "error"
-                         });
+                        });
                         return;
                     }
                     var platformid = $('#regionpaltform').select2('data') && $('#regionpaltform').select2('data').id;
@@ -128,36 +161,23 @@
                         });
                         return;
                     }
-                    
+
                     QQT.ajax('/Admin/Region/AddRegion',
                         'POST',
                         {
-                            platform: platformid,
-                            region: vm.region,
-                            opentime: vm.opentime
-                        })
-                         .done(function (response) {
-                             $('#myModal').modal('hide');
+                            Platform: platformid,
+                            Region: vm.region,
+                            Opentime: vm.opentime
+                        }, true)
+                        .done(function (response) {
+                            $('#myModal').modal('hide');
                             $('#RegionTable').bootstrapTable('refresh', { silent: true });
-                        swal("成功啦！", "新增区服成功!", "success");
-                    }).catch(function () {
-                    });;
-
-                },
-                _RegionEdit: function () {
-                    var selectRow = $('#RegionTable').bootstrapTable('getSelections');
-                    if (selectRow.length < 1) {
-                        swal({
-                            title: "",
-                            text: "请选择行！",
-                            type: "error"
+                            swal("成功啦！", "新增区服成功!", "success");
+                        }).catch(function () {
                         });
-                        return;
-                    }
-
-
 
                 },
+
                 _regionDelete: function () {
                     var selectRow = $('#RegionTable').bootstrapTable('getSelections');
                     if (selectRow.length < 1) {
@@ -169,7 +189,7 @@
                         return;
                     }
                     var platform = selectRow[0].platform;
-                       var region = selectRow[0].region;
+                    var region = selectRow[0].region;
                     swal({
                         title: "您确定要删除吗?",
                         text: "请谨慎操作",
@@ -183,9 +203,10 @@
                             if (isConfirm) {
                                 QQT.ajax('/Admin/Region/DeleteRegion',
                                     'Post',
-                                    {  Platform: platform,
+                                    {
+                                        Platform: platform,
                                         Region: region,
-                                    })
+                                    }, true)
                                     .done(function (response) {
                                         $('#RegionTable').bootstrapTable('refresh', { silent: true });
                                         swal("成功啦！", "操作成功!", "success");
@@ -200,32 +221,95 @@
 
 
                 },
+                _regionEdit: function () {
+                    var selectRow = $('#RegionTable').bootstrapTable('getSelections');
+                    if (selectRow.length < 1) {
+                        swal({
+                            title: "",
+                            text: "请选择行！",
+                            type: "error"
+                        });
+                        return;
+                    }
+                    var row = $.extend({}, selectRow[0]);
+                    vm.currentRow = row;
+                    vm.currentRow.opentime = ConvertDates(vm.currentRow.opentime);
+                    $('#platformedit').select2("val", vm.currentRow.platform);
+                    
+                    $('#editModal').modal({ backdrop: 'static', keyboard: false });
+                    $('#editModal').modal('show');
+
+                },
+                _regionEditClose: function () {
+                    $('#editModal').modal('hide');
+                    $('#RegionTable').bootstrapTable('refresh', { silent: true });
+                },
+                _regioneditSave: function () {
+                    if ($.trim(vm.currentRow.realregion).length < 1) {
+                        swal({
+                            title: "",
+                            text: "真实区服不可为空!",
+                            type: "error"
+                        });
+                        return;
+                    }
+
+                    QQT.ajax('/Admin/Region/EditRegion',
+                        'POST',
+                        {
+                            platform: vm.currentRow.platform,
+                            region: vm.currentRow.region,
+                            opentime: vm.currentRow.opentime,
+                            realregion: vm.currentRow.realregion
+                        },
+                        true)
+                        .done(function (response) {
+                            $('#editModal').modal('hide');
+
+                            $('#RegionTable').bootstrapTable('refresh', { silent: true });
+                            swal("成功啦！", "更新成功!", "success");
+                        });
+
+                }
 
 
             }
         });
-        function getDates(){
-			//设置当前时间
-	      	var date = new Date();
-		    var year = date.getFullYear();//月份从0~11，所以加一
-		    var dateArr = [date.getMonth() + 1,date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds()];
-		    for(var i=0;i<dateArr.length;i++){
-		    	if (dateArr[i] >= 1 && dateArr[i] <= 9) { 
-			        dateArr[i] = "0" + dateArr[i];
-			    }
-		    }
+        function getDates() {
+            //设置当前时间
+            var date = new Date();
+            var year = date.getFullYear();//月份从0~11，所以加一
+            var dateArr = [date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+            for (var i = 0; i < dateArr.length; i++) {
+                if (dateArr[i] >= 1 && dateArr[i] <= 9) {
+                    dateArr[i] = "0" + dateArr[i];
+                }
+            }
             var strDate = year + '-' + dateArr[0] + '-' + dateArr[1] + ' ' + dateArr[2] + ':' + dateArr[3];
             return strDate;
-		}
-        function checkDate(dateStr){
+        }
+         function ConvertDates(time) {
+            //设置当前时间
+            var date = new Date(time);
+            var year = date.getFullYear();//月份从0~11，所以加一
+            var dateArr = [date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+            for (var i = 0; i < dateArr.length; i++) {
+                if (dateArr[i] >= 1 && dateArr[i] <= 9) {
+                    dateArr[i] = "0" + dateArr[i];
+                }
+            }
+            var strDate = year + '-' + dateArr[0] + '-' + dateArr[1] + ' ' + dateArr[2] + ':' + dateArr[3];
+            return strDate;
+        }
+        function checkDate(dateStr) {
             var a = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/
             if (!a.test(dateStr)) {
                 return false
-            }else{
+            } else {
                 return true;
             }
         }
- 
+
         $(function () {
             $('#RegionTable')
                 .bootstrapTable({
@@ -282,7 +366,10 @@
 
                         {
                             field: 'opentime',
-                            title: '开区时间'
+                            title: '开区时间',
+                            formatter: function (value, row, index) {
+                            return ConvertDates(value)
+                             }
                         }
                     ],
                     onLoadSuccess: function () {
@@ -298,18 +385,34 @@
             $(window).resize(function () {
                 $('#RegionTable').bootstrapTable('resetView', { height: $(window).height() });
             });
-            var searchList = new Array();
-              searchList.push({
-                        id:"37wan",
-                        text: "37平台"
-              });
-             $("#regionpaltform").select2({
-                data: searchList,
-                placeholder: '请选择',
-                multiple: false,
-               
-            });
+            QQT.ajax('/Admin/Region/GetPlatform',
+                'POST',
+                {
+                    id: "platform"
+                })
+                .done(function (response) {
+                    var searchList = new Array();
+                    if (response.Rows.length > 0) {
+                        $.each(response.Rows,
+                            function (index, item) {
+                                searchList.push({
+                                    id: item.code,
+                                    text: item.descript
+                                });
+                            });
 
+                    }
+                    $('#platformedit').select2({
+                        data: searchList,
+                        placeholder: '请选择平台',
+                        multiple: false
+                    });
+                    $('#regionpaltform').select2({
+                        data: searchList,
+                        placeholder: '请选择平台',
+                        multiple: false
+                    });
+                });
         });
 
 

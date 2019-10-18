@@ -54,9 +54,11 @@ namespace ShenYu.mgr.core.Areas.Admin.Controllers
             return Json(result);
  
         }
-     
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [API("新增区服")]
-        public async Task<JsonResult> AddRegion(RegionVm vm)
+        public async Task<JsonResult> AddRegion([ModelBinder(typeof(JsonNetBinder)), FromForm]RegionDataVm vm)
         {
             var result = new ResultJsonNoDataInfo();
             try
@@ -76,9 +78,54 @@ namespace ShenYu.mgr.core.Areas.Admin.Controllers
             return Json(result);
         }
        
+        [HttpPost]
+        [API("修改区服")]
+        public async Task<JsonResult> EditRegion([ModelBinder(typeof(JsonNetBinder)), FromForm]RegionDataVm vm)
+        {
+            var result = new ResultJsonNoDataInfo();
+            try
+            {
+                string sql = $"update region_real set realregion={vm.RealRegion} where gamename='MS' and platform='{vm.Platform}' and region={vm.Region}";
+                var respositoryResult = _SqlDB.Execute(sql);
+                result.Status = ResultConfig.Ok;
+                result.Info = ResultConfig.SuccessfulMessage;
+            }
+            catch (Exception ex)
+            {
+
+                result.Status = ResultConfig.Fail;
+                result.Info = ex.Message;
+            }
+
+            return Json(result);
+        }
+        [HttpPost]
+        [API("查询平台区服")]
+        public async Task<JsonResult> GetPlatform(string id)
+        {
+            var result = new SearchResult<List<dynamic>>();
+            try
+            {
+                string sql = $"SELECT  code,descript FROM basecode WHERE cat=@cat ORDER BY seq";
+                var respositoryResult = _SqlDB.Query<dynamic>(sql,new { cat=id}).ToList();
+                result.Rows = respositoryResult;
+                result.Status = ResultConfig.Ok;
+                result.Info = ResultConfig.SuccessfulMessage;
+            }
+            catch (Exception ex)
+            {
+
+                result.Status = ResultConfig.Fail;
+                result.Info = ex.Message;
+            }
+
+            return Json(result);
+        }
         
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [API("删除区服")]
-        public async Task<JsonResult> DeleteRegion(RegionVm vm)
+        public async Task<JsonResult> DeleteRegion([ModelBinder(typeof(JsonNetBinder)), FromForm]RegionDataVm vm)
         {
             var result = new ResultJsonNoDataInfo();
             try
