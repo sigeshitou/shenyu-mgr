@@ -12,7 +12,7 @@ using ViewModels.Result;
 namespace ShenYu.mgr.core.Areas.Admin.Controllers
 {
   
-    [API("Home")]
+    [API("灭神账号")]
     [Area("Admin")]
     public class MieShenController : BaseController
     {
@@ -38,7 +38,7 @@ namespace ShenYu.mgr.core.Areas.Admin.Controllers
         /// 获取相应的列表数据
         /// </summary>
         /// <returns></returns>
-        [API("分页获取所有的角色")]
+        [API("分页获取灭神账号")]
         public async Task<JsonResult> GetMieShenList(MieShenVm model)
         {
             string strwhere = "1=1";

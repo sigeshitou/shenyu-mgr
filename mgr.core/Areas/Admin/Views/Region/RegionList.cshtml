@@ -2,7 +2,7 @@
     ViewBag.Title = "灭神区服管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-    <link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
+
 <script src="~/js/My97DatePicker/WdatePicker.js"></script>
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
@@ -12,10 +12,10 @@
                     <div>
                         <div>
                             <div class="btn-group hidden-xs" id="RegionTableEventsToolbar" role="group">
-                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="查询" style="display: none; margin-right: 10px" v-on:click="_FreshTable">查询</button>
-                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="新增区服" style="display: none; margin-right: 10px" v-on:click="_regionAdd">新增区服</button>
-                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="修改区服" style="display: none;margin-right: 10px" v-on:click="_regionEdit">修改区服</button>
-                                <button type="button" class="btn btn-w-m btn-danger authorization" action-id="role-delete" action-name="删除区服" style="display: none;margin-right: 10px" v-on:click="_regionDelete">删除区服</button>
+                                <button type="button" class="btn btn-w-m btn-success "  action-name="查询" style=" margin-right: 10px" v-on:click="_FreshTable">查询</button>
+                                <button type="button" class="btn btn-w-m btn-success "  action-name="新增区服" style="margin-right: 10px" v-on:click="_regionAdd">新增区服</button>
+                                <button type="button" class="btn btn-w-m btn-success "  action-name="修改区服" style="margin-right: 10px" v-on:click="_regionEdit">修改区服</button>
+                                <button type="button" class="btn btn-w-m btn-danger " action-name="删除区服" style="margin-right: 10px" v-on:click="_regionDelete">删除区服</button>
                                 <div class="input-group" style="display: inline-block">
                                     <input type="text" placeholder="请输入区服" class="form-control input-md" id="region" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
                                 </div>
@@ -88,7 +88,6 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/js/plugins/zTree/3.5/jquery.ztree.all.js?201811201906"></script>
 
     <script type="text/javascript">
         var zTree;

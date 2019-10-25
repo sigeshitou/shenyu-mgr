@@ -13,9 +13,9 @@ using ViewModels.Reuqest;
 
 namespace ShenYu.mgr.core.Areas.Admin.Controllers
 {
-    [API("Home")]
+    [API("区服")]
     [Area("Admin")]
-    public class RegionController : Controller
+    public class RegionController : BaseController
     {
         private readonly DapperClient _SqlDB;
         private readonly ICommonRespository CommonRespository;

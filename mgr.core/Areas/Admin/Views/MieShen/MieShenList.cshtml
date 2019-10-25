@@ -2,31 +2,32 @@
     ViewBag.Title = "灭神管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/js/plugins/zTree/3.5/zTreeStyle/zTreeStyle.css?201811201906" rel="stylesheet" />
-<div class="wrapper wrapper-content animated fadeInRight">
-    <div class="ibox float-e-margins">
-        <div class="ibox-content">
-            <div class="row row-lg">
-                <div class="col-sm-12">
-                    <div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
                         <div>
-                            <div class="btn-group hidden-xs" id="MieShenTableEventsToolbar" role="group">
-                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-add" action-name="查询" style="display: none; margin-right: 10px" v-on:click="_FreshTable">查询</button>
-                                <button type="button" class="btn btn-w-m btn-success authorization" action-id="role-edit" action-name="查看详情" style="display: none;margin-right: 10px" v-on:click="_MieShenEdit">查看详情</button>
-                                <div class="input-group" style="display: inline-block">
-                                    <input type="text" placeholder="请输入账号名" class="form-control input-md" id="username" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
+                            <div>
+                                <div class="btn-group hidden-xs" id="MieshenTableEventsToolbar" role="group">
+                                    <button type="button" class="btn btn-w-m btn-success " action-name="查询" style="margin-right: 10px" v-on:click="_FreshTable">查询</button>
+                                    <button type="button" class="btn btn-w-m btn-success " action-name="查看详情" style="margin-right: 10px" v-on:click="_MieShenEdit">查看详情</button>
+                                    <div class="input-group" style="display: inline-block">
+                                        <input type="text" placeholder="请输入账号名" class="form-control input-md" id="username" style="width: 150px;display: inline-block" v-on:keyup.enter="_FreshTable" data-pure-clear-button />
+                                    </div>
                                 </div>
+                                <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
                             </div>
-                            <table id="MieshenTable" data-side-pagination="server" data-sort-order="desc" data-mobile-responsive="true"></table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
 @section Scripts{
-    <script src="~/js/plugins/zTree/3.5/jquery.ztree.all.js?201811201906"></script>
+
 
     <script type="text/javascript">
         var zTree;
